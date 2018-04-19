@@ -1,0 +1,37 @@
+### telechargement du SDK Solidfire
+yum install -y python-pip
+pip install solidfire-sdk-python
+
+### creation d'un playbook pour verifier la connexion à un cluster + créer un volume
+cat << EOF > ~/playbooks/test_vol_create_sf.yml
+---
+- name: Testing Ansible with SolidFire
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    solidfire_hostname: 192.168.0.101
+    solidfire_username: admin
+    solidfire_password: Netapp1!
+  tasks: 
+  - name: Check connections to MVIP and SVIP
+    sf_check_connections:
+      hostname: "{{ solidfire_hostname }}"
+      username: "{{ solidfire_username }}"
+      password: "{{ solidfire_password }}"
+
+  - name: Create a Volume on SolidFire
+    sf_volume_manager:
+      hostname: "{{ solidfire_hostname }}"
+      username: "{{ solidfire_username }}"
+      password: "{{ solidfire_password }}"
+      state: present
+      name: AnsibleVol
+      qos: {minIOPS: 1000, maxIOPS: 20000, burstIOPS: 50000}
+      account_id: 3
+      enable512e: False
+      size: 1
+      size_unit: gb
+EOF
+
+anisble-playbook  ~/playbooks/test_vol_create_sf.yml
