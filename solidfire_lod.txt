@@ -3,6 +3,7 @@ yum install -y python-pip
 pip install solidfire-sdk-python
 
 ### creation d'un playbook pour verifier la connexion à un cluster + créer un volume
+mkdir ~/playbooks
 cat << EOF > ~/playbooks/test_vol_create_sf.yml
 ---
 - name: Testing Ansible with SolidFire
